@@ -2,7 +2,7 @@ var Feature = require('../models/feature.js');
 /*
  * GET home page.
  */
-
+//
 exports.index = function(req, res){
   console.log("start web");
   res.render('index', { title: 'Graph' });	//调用index.ejs展示页面，并传递参数title='Graph'给index.ejs

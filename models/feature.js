@@ -10,7 +10,7 @@ function Feature(feature) {
   this.VP          = feature.VP          ;
 };
 module.exports = Feature;
-
+//
 Feature.prototype.save = function save(callback){
   // 存入 Mongodb 的文檔
   var feature = {

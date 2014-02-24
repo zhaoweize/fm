@@ -1,10 +1,5 @@
 if (document.getElementById) {
 	var tree = new FMTree('Graph', 'It is the root feature.');
-  
-
-
-
-
   /*  
 	var g1 = new FMTreeItem('Attribute', 'It is a feature which is responsible for the attribute part of the Graph software.', 'Mandatory');
 	tree.add(g1);

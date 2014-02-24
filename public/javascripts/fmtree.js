@@ -443,7 +443,7 @@ FMTreeAbstractNode.prototype.addChild = function() {
     var child = new FMTreeItem(child_text);
   	var root = this;
     while (root.parentNode) { root = root.parentNode; }
-
+//
     $.ajax({
       type: "POST",
       url: "/addNewFeature",
