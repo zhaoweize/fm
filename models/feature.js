@@ -52,6 +52,10 @@ Feature.get = function get(feature_id_no, callback) {
 				mongodb.close();
 				return callback(err);
 			}
+			var query = {};
+			if (feature_id_no) {
+				query.id_no = feature_id_no;
+			}
 			collection.findOne({id_no: feature_id_no}, function(err, doc) {
 				mongodb.close();
 				if (doc) {
@@ -60,6 +64,35 @@ Feature.get = function get(feature_id_no, callback) {
 				} else {
 					callback(err, null);
 				}
+			});
+		});
+	});
+};
+
+Feature.getAll = function getAll(callback) {
+	mongodb.open(function(err, db) {
+		if (err) {
+			return callback(err);
+		}
+
+		db.collection('fmtree', function(err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+			var query = {};
+			collection.find(query).sort({time: -1}).toArray(function(err, docs) {
+				mongodb.close();
+				if (err) {
+					callback(err, null);
+				}
+
+				var features = [];
+				docs.forEach(function(doc, index) {
+					var feature = new Feature(doc);
+					features.push(feature);
+				});
+				callback(null, features);
 			});
 		});
 	});

@@ -1,6 +1,15 @@
 if (document.getElementById) {
 	var tree = new FMTree('Graph', 'It is the root feature.');
-  /*  
+
+  $.ajax({
+  	type:"POST",
+   	url: "/loadFeatureModel",
+   	success: function(data) {
+  		//alert("HAHA");
+  		alert(data.text);
+  	},
+  });
+
 	var g1 = new FMTreeItem('Attribute', 'It is a feature which is responsible for the attribute part of the Graph software.', 'Mandatory');
 	tree.add(g1);
 	var g1_1 = new FMTreeItem('Direction', 'It is a feature which is responsible for the direction part of the Graph software.', 'Mandatory');
@@ -48,6 +57,6 @@ if (document.getElementById) {
 	var g3_4_1 = new FMTreeItem('Dijkstra', 'The SPT part of the Graph software is Dijkstra.');
 	g3_4.add(g3_4_1);
 	var g3_4_2 = new FMTreeItem('Floyd', 'The SPT part of the Graph software is Floyd.');
-	g3_4.add(g3_4_2);*/
+	g3_4.add(g3_4_2);
 	document.write(tree);
 }
