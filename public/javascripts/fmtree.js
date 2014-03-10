@@ -253,6 +253,15 @@ var FMTreeHandler = {
       }
     }
     var newChild = FMTreeHandler.doEditParentAdd(FMTreeHandler.all[parent_id], FMTreeHandler.active);
+    $.ajax({
+      type: "POST",
+      url: "/updateParent_id",
+      data: {
+        id       : FMTreeHandler.active.id,
+        parent_id   : parent_id,
+      },
+      dataType:'json',
+    });
     FMTreeHandler.active.remove();
     var ancestor = FMTreeHandler.all[parent_id];
     while (ancestor.parentNode) {
@@ -263,39 +272,11 @@ var FMTreeHandler = {
     }
     FMTreeHandler.active = null;
     FMTreeHandler.click(newChild);
-    //alert("start ajax with new parent:" + parent_id);
-    /*$.ajax({
-      type: "POST",
-      url: "/updateParent_id",
-      data: {
-        id       : FMTreeHandler.active.id,
-        parent_id   : parent_id,
-      },
-      dataType:'json',
-    });*/ 
     FMTreeHandler.changingParent = false;
   },
   doEditParentAdd : function (newParent, oldChild) {
     var newChild = new FMTreeItem(oldChild.text, oldChild.description, oldChild.optionality, oldChild.VP);
     newParent.add(newChild);
-    /*var root = newParent;
-    while (root.parentNode) { root = root.parentNode; }
-    $.ajax({
-      type: "POST",
-      url: "/addNewFeature",
-      data: {
-        id_no       : newChild.id_no,
-        id          : child.id,
-        text        : newChild.text,
-        parent_id   : newParent.id,
-        description : newChild.description,
-        root        : root.id_no,
-        optionality : newChild.optionality,
-        VP          : newChild.VP,
-        level       : newChild.level,
-      },
-      dataType:'json',
-    });*/ 
     for (var i = 0; i < oldChild.childNodes.length; i++) {
       FMTreeHandler.doEditParentAdd(newChild, oldChild.childNodes[i]);
     }
@@ -527,9 +508,8 @@ FMTreeAbstractNode.prototype.addChild = function() {
         level       : this.level + 1,
       },
       dataType:'json',
-    }); 
-
-    
+      //success: function(data, textStatus){},
+    });     
   }
 }
 
@@ -630,7 +610,15 @@ FMTreeAbstractNode.prototype.click = function() {
 FMTreeAbstractNode.prototype.delete = function() {
   if (this.folder) {
   	if (window.confirm("Do you want to delete \"" + this.text + "\" and all its descendants?")) {
-  	  this.remove();
+  	  $.ajax({
+        type: "POST",
+        url: "/removeSubtree",
+        data: {
+          id       : this.id,
+        },
+        dataType:'json',
+      }); 
+      this.remove();
   	  if (FMTreeHandler.active.id == this.id) {
   	  	FMTreeHandler.active = null;
   	    document.getElementById("info-name").innerHTML="";
@@ -643,7 +631,15 @@ FMTreeAbstractNode.prototype.delete = function() {
   }
   else {
   	if (window.confirm("Do you want to delete \"" + this.text + "\"?")) {
-  	  this.remove();
+  	  $.ajax({
+        type: "POST",
+        url: "/removeSubtree",
+        data: {
+          id       : this.id,
+        },
+        dataType:'json',
+      }); 
+      this.remove();
   	  if (FMTreeHandler.active.id == this.id) {
   	  	FMTreeHandler.active = null;
   	    document.getElementById("info-name").innerHTML="";
@@ -840,25 +836,9 @@ FMTreeItem.prototype.remove = function() {
       document.getElementById(prevSibling.id + '-plus').src = iconSrc;
     }
   }
-  $.ajax({
-    type: "POST",
-    url: "/removeSubtree",
-    data: {
-      id       : this.id,
-    },
-    dataType:'json',
-  }); 
 }
 
 FMTreeItem.prototype._remove = function() {
-  /*$.ajax({
-    type: "POST",
-    url: "/removeFeature",
-    data: {
-      id_       : this.id,
-    },
-    dataType:'json',
-  });*/
   for (var i = this.childNodes.length - 1; i >= 0; i--) {
     this.childNodes[i]._remove();
    }

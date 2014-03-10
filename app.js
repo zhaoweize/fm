@@ -58,7 +58,7 @@ app.post('/removeFeature', routes.removeFeature);
 app.post('/updateText', routes.updateText);
 app.post('/updateDescription', routes.updateDescription);
 app.post('/updateOptionality', routes.updateOptionality);
-//app.post('/updateParent_id', routes.updateParent_id);
+app.post('/updateParent_id', routes.updateParent_id);
 app.post('/updateVP', routes.updateVP);
 app.post('/removeSubtree', routes.removeSubtree);
 

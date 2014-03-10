@@ -172,6 +172,7 @@ Feature.removeSubtree = function removeSubtree(feature_id, callback) {
 			return callback(err);
 		}
 		Feature._removeSubtree(collection, feature_id);
+		callback(err);
 	});
 };
 
@@ -251,6 +252,8 @@ Feature.updateParent_id = function updateParent_id(feature_id, newParent_id, cal
 				mongodb.close();
 				return callback(err);
 			}
+			console.log("CURRENT　FEATURE IS: "+feature_id);
+			console.log("NEW PARENT IS: "+newParent_id);
 			var query = {};
 			query.id = feature_id;
 			var newFeature = {};

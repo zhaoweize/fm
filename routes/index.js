@@ -36,6 +36,7 @@ exports.addNewFeature = function(req,res){
   			req.flash('error', err);
   			return res.redirect('/');
   		}
+  		//res.send({'nothing':null});
   	});
   	console.log("ADD NEW FEATURE: SUCCESS");
   });
@@ -49,9 +50,6 @@ exports.loadFeatureModel = function(req,res){
 			req.flash('error', err);
 			return res.redirect('/');
 		}
-		//features.forEach(function(feature, index) {
-			//console.log(feature.text);
-		//});
 		res.send({'features': features});
 		console.log("FINISH SENDING")
 	});
@@ -77,7 +75,7 @@ exports.removeSubtree = function(req,res) {
 			req.flash('error', err);
 			return res.redirect('/');
 		}
-		console.log("DELETE SUBTREE: SUCCESS");
+		//console.log("DELETE SUBTREE: SUCCESS");
 	});
 };
 
@@ -120,7 +118,7 @@ exports.updateOptionality = function(req,res) {
 	});
 };
 
-/*exports.updateParent_id = function(req,res) {
+exports.updateParent_id = function(req,res) {
 	console.log("START \"updateParent_id\"");
 	var _id = req.body.id;
 	var newParent_id = req.body.parent_id;
@@ -131,7 +129,7 @@ exports.updateOptionality = function(req,res) {
 		}
 		console.log("UPDATE PARENT: SUCCESS");
 	});
-};*/
+};
 
 exports.updateVP = function(req,res) {
 	console.log("START \"updateVP\"");

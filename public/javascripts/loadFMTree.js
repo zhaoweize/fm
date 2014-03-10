@@ -1,5 +1,5 @@
 if (document.getElementById) {
-	var tree = new FMTree('Graph', 'It is the root feature.');
+	var tree = new FMTree('老父亲', 'It is the root feature.');
 
   $.ajax({
   	type:"POST",
