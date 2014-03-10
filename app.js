@@ -9,9 +9,12 @@ var express = require('express')
   , partials = require('express-partials')
   , MongoStore = require('connect-mongo')(express)
   , flash = require('connect-flash')
-  , settings = require('./settings');
+  , settings = require('./settings')
+  , mongodb = require('./models/db');
 
 var app = express();
+
+mongodb.open(function(err,db){});
 
 // all environments
 app.set('port', process.env.PORT || 3000);
