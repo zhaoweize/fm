@@ -14,15 +14,16 @@ exports.addNewFeature = function(req,res){
   	id_no       : req.body.id_no       ,
 		id          : req.body.id          ,
 		text        : req.body.text        ,
-		parent      : req.body.parent      ,
+		parent_id   : req.body.parent_id   ,
 		description : req.body.description ,
 		root        : req.body.root        ,
 		optionality : req.body.optionality ,
 		VP          : req.body.VP          ,
+		level       : req.body.level       ,
   });
   
-  Feature.get(newFeature.id_no, function(err, feature) {
-  	console.log("START \".get() in addNewFeature\"");
+  Feature.get(newFeature.id, function(err, feature) {
+  	console.log("START \".get() in addNewFeature--\"" + newFeature.text);
   	if (feature)
   	  err = 'FeatureID already exists.';
   	if (err) {
@@ -51,7 +52,96 @@ exports.loadFeatureModel = function(req,res){
 		//features.forEach(function(feature, index) {
 			//console.log(feature.text);
 		//});
-		res.send({'text': 'haha'});
+		res.send({'features': features});
 		console.log("FINISH SENDING")
+	});
+};
+
+exports.removeFeature = function(req,res) {
+	console.log("START \"removeFeature\"");
+	var _id = req.body.id;
+	Feature.remove(_id, function(err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		console.log("DELETE FEATURE: SUCCESS");
+	});
+};
+
+exports.removeSubtree = function(req,res) {
+	console.log("START \"removeSubtree\"");
+	var _id = req.body.id;
+	Feature.removeSubtree(_id, function(err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		console.log("DELETE SUBTREE: SUCCESS");
+	});
+};
+
+exports.updateText = function(req,res) {
+	console.log("START \"updateText\"");
+	var _id = req.body.id;
+	var newText = req.body.text;
+	Feature.updateText(_id, newText, function(err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		console.log("UPDATE NAME: SUCCESS");
+	});
+};
+
+exports.updateDescription = function(req,res) {
+	console.log("START \"updateDescription\"");
+	var _id = req.body.id;
+	var newDescription = req.body.description;
+	Feature.updateDescription(_id, newDescription, function(err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		console.log("UPDATE DESCRIPTION: SUCCESS");
+	});
+};
+
+exports.updateOptionality = function(req,res) {
+	console.log("START \"updateOptionality\"");
+	var _id = req.body.id;
+	var newOptionality = req.body.optionality;
+	Feature.updateOptionality(_id, newOptionality, function(err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		console.log("UPDATE OPTIONALITY: SUCCESS");
+	});
+};
+
+/*exports.updateParent_id = function(req,res) {
+	console.log("START \"updateParent_id\"");
+	var _id = req.body.id;
+	var newParent_id = req.body.parent_id;
+	Feature.updateParent_id(_id, newParent_id, function(err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		console.log("UPDATE PARENT: SUCCESS");
+	});
+};*/
+
+exports.updateVP = function(req,res) {
+	console.log("START \"updateVP\"");
+	var _id = req.body.id;
+	var newVP = req.body.VP;
+	Feature.updateVP(_id, newVP, function(err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		console.log("UPDATE VP: SUCCESS");
 	});
 };

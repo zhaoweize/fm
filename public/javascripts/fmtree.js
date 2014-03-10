@@ -66,6 +66,16 @@ var FMTreeHandler = {
     document.getElementById(FMTreeHandler.active.id + "-anchor").innerHTML = name;
     //document.getElementById("infoLine1").onmouseover="infoLineButton1.className=''";
     //document.getElementById("infoLine1").onmouseout="infoLineButton1.className='invisible'";
+    $.ajax({
+      type: "POST",
+      url: "/updateText",
+      data: {
+        id       : FMTreeHandler.active.id,
+        text        : FMTreeHandler.active.text,
+      },
+      dataType:'json',
+    }); 
+
     FMTreeHandler.changingName = false;
   },
   editDescription: function () {
@@ -84,6 +94,17 @@ var FMTreeHandler = {
     //document.getElementById("infoLineButton2").className="invisible";
     //document.getElementById("infoLine2").onmouseover="infoLineButton2.className=''";
     //document.getElementById("infoLine2").onmouseout="infoLineButton2.className='invisible'";
+
+    $.ajax({
+      type: "POST",
+      url: "/updateDescription",
+      data: {
+        id      : FMTreeHandler.active.id,
+        description : FMTreeHandler.active.description,
+      },
+      dataType:'json',
+    }); 
+
     FMTreeHandler.changingDescription = false;
   },
   editOptionality: function () {
@@ -146,6 +167,17 @@ var FMTreeHandler = {
     //document.getElementById("infoLineButton3").className="invisible";
     //document.getElementById("infoLine3").onmouseover="infoLineButton3.className=''";
     //document.getElementById("infoLine3").onmouseout="infoLineButton3.className='invisible'";
+    
+    $.ajax({
+      type: "POST",
+      url: "/updateOptionality",
+      data: {
+        id       : FMTreeHandler.active.id,
+        optionality : FMTreeHandler.active.optionality,
+      },
+      dataType:'json',
+    }); 
+
     FMTreeHandler.active_optionality = '';
     FMTreeHandler.changingOptionality = false;
   },
@@ -231,11 +263,39 @@ var FMTreeHandler = {
     }
     FMTreeHandler.active = null;
     FMTreeHandler.click(newChild);
+    //alert("start ajax with new parent:" + parent_id);
+    /*$.ajax({
+      type: "POST",
+      url: "/updateParent_id",
+      data: {
+        id       : FMTreeHandler.active.id,
+        parent_id   : parent_id,
+      },
+      dataType:'json',
+    });*/ 
     FMTreeHandler.changingParent = false;
   },
   doEditParentAdd : function (newParent, oldChild) {
     var newChild = new FMTreeItem(oldChild.text, oldChild.description, oldChild.optionality, oldChild.VP);
     newParent.add(newChild);
+    /*var root = newParent;
+    while (root.parentNode) { root = root.parentNode; }
+    $.ajax({
+      type: "POST",
+      url: "/addNewFeature",
+      data: {
+        id_no       : newChild.id_no,
+        id          : child.id,
+        text        : newChild.text,
+        parent_id   : newParent.id,
+        description : newChild.description,
+        root        : root.id_no,
+        optionality : newChild.optionality,
+        VP          : newChild.VP,
+        level       : newChild.level,
+      },
+      dataType:'json',
+    });*/ 
     for (var i = 0; i < oldChild.childNodes.length; i++) {
       FMTreeHandler.doEditParentAdd(newChild, oldChild.childNodes[i]);
     }
@@ -252,7 +312,7 @@ var FMTreeHandler = {
     }
     else if (FMTreeHandler.active_VP == 'OR') {
       document.getElementById("info-VP").innerHTML = "<img id=\"vpLeftButton\" class=\"myButton\" src=\"" + FMTreeConfig.vpLeftWhiteButton + "\" onclick=\"FMTreeHandler.clickVPLeft();\"/>&nbsp;&nbsp;<img id=\"vpMiddleButton\" class=\"myButton\" src=\"" + FMTreeConfig.vpMiddleGreyButton + "\" onclick=\"FMTreeHandler.clickVPMiddle();\"/><img id=\"vpRightButton\" class=\"myButton\" src=\"" + FMTreeConfig.vpRightWhiteButton + "\" onclick=\"FMTreeHandler.clickVPRight();\"/>";
-    }
+    } 
     else if (FMTreeHandler.active_VP == 'XOR') {
       document.getElementById("info-VP").innerHTML = "<img id=\"vpLeftButton\" class=\"myButton\" src=\"" + FMTreeConfig.vpLeftWhiteButton + "\" onclick=\"FMTreeHandler.clickVPLeft();\"/>&nbsp;&nbsp;<img id=\"vpMiddleButton\" class=\"myButton\" src=\"" + FMTreeConfig.vpMiddleWhiteButton + "\" onclick=\"FMTreeHandler.clickVPMiddle();\"/><img id=\"vpRightButton\" class=\"myButton\" src=\"" + FMTreeConfig.vpRightGreyButton + "\" onclick=\"FMTreeHandler.clickVPRight();\"/>";
     }
@@ -310,6 +370,17 @@ var FMTreeHandler = {
     else {
       document.getElementById(FMTreeHandler.active.id + "-optVPIcon").src = document.getElementById(FMTreeHandler.active.id + "-optVPIcon").src.replace('XOR','NonVP').replace('OOR','NonVP');
     }
+
+    $.ajax({
+      type: "POST",
+      url: "/updateVP",
+      data: {
+        id       : FMTreeHandler.active.id,
+        VP          : FMTreeHandler.active.VP,
+      },
+      dataType:'json',
+    }); 
+
     FMTreeHandler.changingVP = false;
   },
   /* 将sHTML插入HTML中 */
@@ -337,8 +408,21 @@ var FMTreeHandler = {
  * FMTreeAbstractNode class
  */
 
-function FMTreeAbstractNode(sText, sDescription, sOptionality, sVP, sAction) {
-  this.id_no  = FMTreeHandler.getId();
+function FMTreeAbstractNode(sText, sDescription, sOptionality, sVP, sId_no, sId, sAction) {
+  //alert("Text: "+sText);
+  //alert("Description: "+sDescription);
+  //alert("Optionality: "+sOptionality);
+  //alert("VP: "+sVP);
+  //alert("Id_no: "+sId_no);
+
+  if (sId_no) {
+    this.id_no = sId_no;
+    if (sId_no >= FMTreeHandler.idCounter)
+      FMTreeHandler.idCounter = ++sId_no;
+    sId_no--;
+  }
+  else
+    this.id_no  = FMTreeHandler.getId();
   this.id     = FMTreeHandler.idPrefix + this.id_no;
   this.text   = sText || FMTreeConfig.defaultText;
   this.description = sDescription || '';
@@ -359,33 +443,11 @@ function FMTreeAbstractNode(sText, sDescription, sOptionality, sVP, sAction) {
   this._last  = false; /*该结点是否是兄弟中最后一个 */
   FMTreeHandler.all[this.id] = this;
 }
-/*
-FMTreeAbstractNode.prototype.save = function save() {
-  //存入 Mongodb 的文档
-  var feature = {
-    id_no: this.id_no;
-    text: this.text;
-    parent: this.parentNode.id_no;
-  }
-  mongodb.open(function(err,db) {
-    if (err) {
-      return;
-    }
-    db.collection('features', function(err, collection) {
-      if (err) {
-        mongodb.close();
-        return;
-      }
-      collection.ensureIndex('id_no', {unique: true});
-      collection.insert(feature, {safe: true}, function(err, user) {
-        mongodb.close();
-      });
-    });
-  });
-}
-*/
+
 /* 添加一个子结点到当前节点，node为子结点实例，bNoIdent为true时将防止在增加结点时树的折叠*/
 FMTreeAbstractNode.prototype.add = function (node, bNoIdent) {
+  node.level = this.level + 1;
+
   /* root为根结点 */
   var root = this;
   while (root.parentNode) { root = root.parentNode; }
@@ -441,9 +503,15 @@ FMTreeAbstractNode.prototype.addChild = function() {
   var child_text = window.prompt("Type the name of the feature:", "New Feature");
   if (child_text) {
     var child = new FMTreeItem(child_text);
-  	var root = this;
+    var root = this;
     while (root.parentNode) { root = root.parentNode; }
-//
+    this.add(child);
+    if (this.folder) {
+      if (!this.open) {
+        this.expand();
+      }
+    }
+    FMTreeHandler.click(child);
     $.ajax({
       type: "POST",
       url: "/addNewFeature",
@@ -451,22 +519,17 @@ FMTreeAbstractNode.prototype.addChild = function() {
         id_no       : child.id_no,
         id          : child.id,
         text        : child.text,
-        parent      : this.id_no,
+        parent_id   : this.id,
         description : child.description,
         root        : root.id_no,
         optionality : child.optionality,
         VP          : child.VP,
+        level       : this.level + 1,
       },
       dataType:'json',
     }); 
 
-    this.add(child);
-    if (this.folder) {
-  	  if (!this.open) {
-  	    this.expand();
-  	  }
-    }
-    FMTreeHandler.click(child);
+    
   }
 }
 
@@ -474,6 +537,27 @@ FMTreeAbstractNode.prototype.addSibling = function() {
   var sibling_text = (window.prompt("Type the name of the feature", "New Feature"));
   if (sibling_text) {
   	var sibling = new FMTreeItem(sibling_text);
+    //sibling.level = this.level;
+    var root = this;
+    while (root.parentNode) { root = root.parentNode; }
+//
+    $.ajax({
+      type: "POST",
+      url: "/addNewFeature",
+      data: {
+        id_no       : sibling.id_no,
+        id          : sibling.id,
+        text        : sibling.text,
+        parent_id   : this.parentNode.id,
+        description : sibling.description,
+        root        : root.id_no,
+        optionality : sibling.optionality,
+        VP          : sibling.VP,
+        level       : this.level,
+      },
+      dataType:'json',
+    }); 
+
     this.parentNode.add(sibling);
     FMTreeHandler.click(sibling);
   }
@@ -646,15 +730,16 @@ FMTreeAbstractNode.prototype.indent = function(lvl, del, last, level, nodesLeft)
  * FMTree class
  */
 
-function FMTree(sText, sDescription, sOptionality, sVP, sAction) {
+function FMTree(sText, sDescription, sOptionality, sVP, sId_no, sAction) {
   this.base = FMTreeAbstractNode;
-  this.base(sText, sDescription, sOptionality, sVP, sAction);
+  this.base(sText, sDescription, sOptionality, sVP, sId_no, sAction);
   this.plus = FMTreeConfig.lPlusIcon;
 
   /* Defaults to open */
   this.open  = true;
   this.folder    = true;
   this.rendered  = false;
+  this.level = 0;
 }
 
 FMTree.prototype = new FMTreeAbstractNode;
@@ -713,9 +798,9 @@ FMTree.prototype.toString = function() {
  * FMTreeItem class
  */
 
-function FMTreeItem(sText, sDescription, sOptionality, sVP, sAction, eParent) {
+function FMTreeItem(sText, sDescription, sOptionality, sVP, sId_no, sAction, eParent) {
   this.base = FMTreeAbstractNode;
-  this.base(sText, sDescription, sOptionality, sVP, sAction);
+  this.base(sText, sDescription, sOptionality, sVP, sId_no, sAction);
   /* Defaults to close */
   this.open = false;
   if (eParent) { eParent.add(this); }
@@ -753,9 +838,27 @@ FMTreeItem.prototype.remove = function() {
         iconSrc = iconSrc.replace('minus', '').replace('plus', '');
       }
       document.getElementById(prevSibling.id + '-plus').src = iconSrc;
-}  }  }
+    }
+  }
+  $.ajax({
+    type: "POST",
+    url: "/removeSubtree",
+    data: {
+      id       : this.id,
+    },
+    dataType:'json',
+  }); 
+}
 
 FMTreeItem.prototype._remove = function() {
+  /*$.ajax({
+    type: "POST",
+    url: "/removeFeature",
+    data: {
+      id_       : this.id,
+    },
+    dataType:'json',
+  });*/
   for (var i = this.childNodes.length - 1; i >= 0; i--) {
     this.childNodes[i]._remove();
    }
@@ -874,67 +977,4 @@ FMTreeItem.prototype.toString = function (nItem, nItemCount) {
   this.minusIcon = ((this.parentNode._last)?FMTreeConfig.lMinusIcon:FMTreeConfig.tMinusIcon);
   return str + sb.join("") + "</div>";
 }
-
-
-var ConstraintHandler = {
-  idCounter : 0,
-  all       : {},
-  getId     : function() { return this.idCounter++; },
-  insertHTMLBeforeEnd  :  function (oElement, sHTML) {
-    /* 如果可以用 insertAdjacentHTML 方法 */
-    if (oElement.insertAdjacentHTML != null) {
-      oElement.insertAdjacentHTML("BeforeEnd", sHTML)
-      return;
-    }
-
-    /* 如果不可以用 insertAdjacentHTML 方法 */                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-    var df;  // DocumentFragment
-    var r = oElement.ownerDocument.createRange();
-    r.selectNodeContents(oElement);
-    r.collapse();
-    df = r.createContextualFragment(sHTML);
-    oElement.appendChild(df);
-  }
-}
-
-
-
-function Constraint(sLeft, sRight, sCons) {
-  this.id_no  = ConstraintHandler.getId();
-  this.id     = ConstraintHandler.idPrefix + this.id_no;
-  for (var i = 0; i < sLeft.length; i++) {
-    this.Left[i] = sLeft[i];
-  }
-  for (var i = 0; i < sRight.length; i++) {
-    this.Right[i] = sRight[i];
-  }
-  this.Cons = sCons;
-}
-
-Constraint.prototype.add = function () {
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//exports.FMTreeHandler = FMTreeHandler;
-//exports.FMTree = FMTree;
-//exports.FMTreeItem = FMTreeItem;
-
- 
-  
 
