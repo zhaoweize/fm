@@ -9,7 +9,7 @@ exports.index = function(req, res){
 };
 
 exports.addNewFeature = function(req,res){
-  console.log("START \"addNewFeature\"");
+  console.log("\n" + req.body.text + "在index.js中的 \"addNewFeature\"开始了！");
   var newFeature = new Feature({
   	id_no       : req.body.id_no       ,
 		id          : req.body.id          ,
@@ -21,9 +21,17 @@ exports.addNewFeature = function(req,res){
 		VP          : req.body.VP          ,
 		level       : req.body.level       ,
   });
-  
+  console.log("    id_no :  " + newFeature.id_no      );
+	console.log("    id:  " + newFeature.id         );
+	console.log("    text:  " + newFeature.text       );
+	console.log("    parent_id:  " + newFeature.parent_id  );
+	console.log("    description:  " + newFeature.description);
+	console.log("    root:  " + newFeature.root       );
+	console.log("    optionality:  " + newFeature.optionality);
+	console.log("    VP:  " + newFeature.VP         );
+	console.log("    level:  " + newFeature.level      );
   Feature.get(newFeature.id, function(err, feature) {
-  	console.log("START \".get() in addNewFeature--\"" + newFeature.text);
+  	console.log(newFeature.text+" 在index.js中的adNewFeature中的get开始了");
   	if (feature)
   	  err = 'FeatureID already exists.';
   	if (err) {
@@ -36,7 +44,7 @@ exports.addNewFeature = function(req,res){
   			req.flash('error', err);
   			return res.redirect('/');
   		}
-  		//res.send({'nothing':null});
+  		res.send({});
   	});
   	console.log("ADD NEW FEATURE: SUCCESS");
   });
@@ -63,6 +71,7 @@ exports.removeFeature = function(req,res) {
 			req.flash('error', err);
 			return res.redirect('/');
 		}
+		res.send({});
 		console.log("DELETE FEATURE: SUCCESS");
 	});
 };
@@ -75,7 +84,8 @@ exports.removeSubtree = function(req,res) {
 			req.flash('error', err);
 			return res.redirect('/');
 		}
-		//console.log("DELETE SUBTREE: SUCCESS");
+		res.send({});
+		console.log("DELETE SUBTREE: SUCCESS");
 	});
 };
 

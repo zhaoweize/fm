@@ -73,7 +73,7 @@ var FMTreeHandler = {
         id       : FMTreeHandler.active.id,
         text        : FMTreeHandler.active.text,
       },
-      dataType:'json',
+      //dataType:'json',
     }); 
 
     FMTreeHandler.changingName = false;
@@ -102,7 +102,7 @@ var FMTreeHandler = {
         id      : FMTreeHandler.active.id,
         description : FMTreeHandler.active.description,
       },
-      dataType:'json',
+      //dataType:'json',
     }); 
 
     FMTreeHandler.changingDescription = false;
@@ -175,7 +175,7 @@ var FMTreeHandler = {
         id       : FMTreeHandler.active.id,
         optionality : FMTreeHandler.active.optionality,
       },
-      dataType:'json',
+      //dataType:'json',
     }); 
 
     FMTreeHandler.active_optionality = '';
@@ -260,7 +260,7 @@ var FMTreeHandler = {
         id       : FMTreeHandler.active.id,
         parent_id   : parent_id,
       },
-      dataType:'json',
+      //dataType:'json',
     });
     FMTreeHandler.active.remove();
     var ancestor = FMTreeHandler.all[parent_id];
@@ -359,7 +359,7 @@ var FMTreeHandler = {
         id       : FMTreeHandler.active.id,
         VP          : FMTreeHandler.active.VP,
       },
-      dataType:'json',
+      //dataType:'json',
     }); 
 
     FMTreeHandler.changingVP = false;
@@ -507,8 +507,8 @@ FMTreeAbstractNode.prototype.addChild = function() {
         VP          : child.VP,
         level       : this.level + 1,
       },
-      dataType:'json',
-      //success: function(data, textStatus){},
+      //dataType:'json',
+      //success: function(data){window.alert("哈哈");},
     });     
   }
 }
@@ -520,7 +520,6 @@ FMTreeAbstractNode.prototype.addSibling = function() {
     //sibling.level = this.level;
     var root = this;
     while (root.parentNode) { root = root.parentNode; }
-//
     $.ajax({
       type: "POST",
       url: "/addNewFeature",
@@ -535,7 +534,8 @@ FMTreeAbstractNode.prototype.addSibling = function() {
         VP          : sibling.VP,
         level       : this.level,
       },
-      dataType:'json',
+      //dataType:'json',
+      //success: function(data){window.alert(sibling_text);},
     }); 
 
     this.parentNode.add(sibling);
@@ -616,10 +616,10 @@ FMTreeAbstractNode.prototype.delete = function() {
         data: {
           id       : this.id,
         },
-        dataType:'json',
+        //dataType:'json',
       }); 
-      this.remove();
-  	  if (FMTreeHandler.active.id == this.id) {
+      
+  	  if (FMTreeHandler.active && FMTreeHandler.active.id == this.id) {
   	  	FMTreeHandler.active = null;
   	    document.getElementById("info-name").innerHTML="";
     		document.getElementById("info-description").innerHTML="";
@@ -627,20 +627,22 @@ FMTreeAbstractNode.prototype.delete = function() {
     		document.getElementById("info-parent").innerHTML="";
     		document.getElementById("info-VP").innerHTML="";
     	}
+      this.remove();
     }
   }
   else {
   	if (window.confirm("Do you want to delete \"" + this.text + "\"?")) {
-  	  $.ajax({
+  	  //alert(this.id);
+      $.ajax({
         type: "POST",
         url: "/removeSubtree",
         data: {
-          id       : this.id,
+          id : this.id,
         },
-        dataType:'json',
+        //dataType:'json',
       }); 
-      this.remove();
-  	  if (FMTreeHandler.active.id == this.id) {
+      
+  	  if (FMTreeHandler.active && FMTreeHandler.active.id == this.id) {
   	  	FMTreeHandler.active = null;
   	    document.getElementById("info-name").innerHTML="";
 		    document.getElementById("info-description").innerHTML="";
@@ -648,6 +650,7 @@ FMTreeAbstractNode.prototype.delete = function() {
 		    document.getElementById("info-parent").innerHTML="";
 		    document.getElementById("info-VP").innerHTML="";
 	    }
+      this.remove();
     }
   }
 }
