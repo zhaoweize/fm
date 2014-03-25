@@ -31,7 +31,7 @@ var FMTreeConfig = {
 };
 
 var FMTreeHandler = {
-  idCounter : 0, /* 新建一个结点时会调用getID，此时Counter自加，并作为新结点的ID被分配 */
+  //idCounter : 0, /* 新建一个结点时会调用getID，此时Counter自加，并作为新结点的ID被分配 */
   idPrefix  : "FM_tree_object_",
   all       : {}, /* 每新建一个结点，该结点就会将自己的副本放到all数组中 */
   active    : null,
@@ -70,8 +70,8 @@ var FMTreeHandler = {
       type: "POST",
       url: "/updateText",
       data: {
-        id       : FMTreeHandler.active.id,
-        text        : FMTreeHandler.active.text,
+        _id : FMTreeHandler.active.id.substring(15),
+        text : FMTreeHandler.active.text,
       },
       //dataType:'json',
     }); 
@@ -99,7 +99,7 @@ var FMTreeHandler = {
       type: "POST",
       url: "/updateDescription",
       data: {
-        id      : FMTreeHandler.active.id,
+        _id : FMTreeHandler.active.id.substring(15),
         description : FMTreeHandler.active.description,
       },
       //dataType:'json',
@@ -172,7 +172,7 @@ var FMTreeHandler = {
       type: "POST",
       url: "/updateOptionality",
       data: {
-        id       : FMTreeHandler.active.id,
+        _id : FMTreeHandler.active.id.substring(15),
         optionality : FMTreeHandler.active.optionality,
       },
       //dataType:'json',
@@ -253,12 +253,13 @@ var FMTreeHandler = {
       }
     }
     var newChild = FMTreeHandler.doEditParentAdd(FMTreeHandler.all[parent_id], FMTreeHandler.active);
+    window.alert(FMTreeHandler.active.id.substring(15));
     $.ajax({
       type: "POST",
       url: "/updateParent_id",
       data: {
-        id       : FMTreeHandler.active.id,
-        parent_id   : parent_id,
+        _id : FMTreeHandler.active.id.substring(15),
+        parent_id : parent_id.substring(15),
       },
       //dataType:'json',
     });
@@ -275,7 +276,7 @@ var FMTreeHandler = {
     FMTreeHandler.changingParent = false;
   },
   doEditParentAdd : function (newParent, oldChild) {
-    var newChild = new FMTreeItem(oldChild.text, oldChild.description, oldChild.optionality, oldChild.VP);
+    var newChild = new FMTreeItem(oldChild.text, oldChild.description, oldChild.optionality, oldChild.VP, oldChild.id);
     newParent.add(newChild);
     for (var i = 0; i < oldChild.childNodes.length; i++) {
       FMTreeHandler.doEditParentAdd(newChild, oldChild.childNodes[i]);
@@ -356,8 +357,8 @@ var FMTreeHandler = {
       type: "POST",
       url: "/updateVP",
       data: {
-        id       : FMTreeHandler.active.id,
-        VP          : FMTreeHandler.active.VP,
+        _id : FMTreeHandler.active.id.substring(15),
+        VP : FMTreeHandler.active.VP,
       },
       //dataType:'json',
     }); 
@@ -389,23 +390,9 @@ var FMTreeHandler = {
  * FMTreeAbstractNode class
  */
 
-function FMTreeAbstractNode(sText, sDescription, sOptionality, sVP, sId_no, sId, sAction) {
-  //alert("Text: "+sText);
-  //alert("Description: "+sDescription);
-  //alert("Optionality: "+sOptionality);
-  //alert("VP: "+sVP);
-  //alert("Id_no: "+sId_no);
-
-  if (sId_no) {
-    this.id_no = sId_no;
-    if (sId_no >= FMTreeHandler.idCounter)
-      FMTreeHandler.idCounter = ++sId_no;
-    sId_no--;
-  }
-  else
-    this.id_no  = FMTreeHandler.getId();
-  this.id     = FMTreeHandler.idPrefix + this.id_no;
-  this.text   = sText || FMTreeConfig.defaultText;
+function FMTreeAbstractNode(sText, sDescription, sOptionality, sVP, sId, sAction) {
+  this.id  = FMTreeHandler.idPrefix + sId;
+  this.text   = sText || FMTreeConfig.defaultText; 
   this.description = sDescription || '';
   if (sOptionality == 'Mandatory' || sOptionality == 'Optional') {
     this.optionality = sOptionality;
@@ -483,63 +470,67 @@ FMTreeAbstractNode.prototype.add = function (node, bNoIdent) {
 FMTreeAbstractNode.prototype.addChild = function() {
   var child_text = window.prompt("Type the name of the feature:", "New Feature");
   if (child_text) {
-    var child = new FMTreeItem(child_text);
     var root = this;
     while (root.parentNode) { root = root.parentNode; }
-    this.add(child);
-    if (this.folder) {
-      if (!this.open) {
-        this.expand();
-      }
-    }
-    FMTreeHandler.click(child);
+    var temp = this;
+    //window.alert(this.id.substring(15));
     $.ajax({
       type: "POST",
       url: "/addNewFeature",
       data: {
-        id_no       : child.id_no,
-        id          : child.id,
-        text        : child.text,
-        parent_id   : this.id,
-        description : child.description,
-        root        : root.id_no,
-        optionality : child.optionality,
-        VP          : child.VP,
+        text        : child_text,
+        parent_id   : this.id.substring(15),
+        root        : root.id.substring(15),
+        optionality : 'Optional',
+        VP          : 'Non-VP',
         level       : this.level + 1,
       },
-      //dataType:'json',
-      //success: function(data){window.alert("哈哈");},
-    });     
+      dataType:'json', 
+      success: function(data) {
+        var child = new FMTreeItem(child_text, null, 'Optional', 'Non-VP', data._id);
+        temp.add(child);
+        if (temp.folder) {
+          if (!temp.open) {
+            temp.expand();
+          }
+        }
+        FMTreeHandler.click(child);
+      },
+      error: function(data) {
+        window.alert("FAILED!!!\nFeature \"" + child_text + "\" is already exist, or there's something wrong with DB.");
+      }
+    }); 
   }
 }
 
 FMTreeAbstractNode.prototype.addSibling = function() {
   var sibling_text = (window.prompt("Type the name of the feature", "New Feature"));
   if (sibling_text) {
-  	var sibling = new FMTreeItem(sibling_text);
-    //sibling.level = this.level;
+  	//var sibling = new FMTreeItem(sibling_text);
     var root = this;
     while (root.parentNode) { root = root.parentNode; }
+    var temp = this;
     $.ajax({
       type: "POST",
       url: "/addNewFeature",
       data: {
-        id_no       : sibling.id_no,
-        id          : sibling.id,
-        text        : sibling.text,
-        parent_id   : this.parentNode.id,
-        description : sibling.description,
-        root        : root.id_no,
-        optionality : sibling.optionality,
-        VP          : sibling.VP,
+        text        : sibling_text,
+        parent_id   : this.parentNode.id.substring(15),
+        root        : root.id.substring(15),
+        optionality : 'Optional',
+        VP          : 'Non-VP',
         level       : this.level,
       },
-      //dataType:'json',
-      //success: function(data){window.alert(sibling_text);},
+      dataType:'json',
+      success: function(data) {
+        var sibling = new FMTreeItem(sibling_text, null, 'Optional', 'Non-VP', data._id);
+        temp.parentNode.add(sibling);
+        FMTreeHandler.click(sibling);
+      },
+      error: function(data) {
+        window.alert("FAILED!!!\nFeature \"" + sibling_text + "\" is already exist, or there's something wrong with DB.");
+      },
     }); 
-
-    this.parentNode.add(sibling);
-    FMTreeHandler.click(sibling);
   }
 }
 
@@ -610,11 +601,12 @@ FMTreeAbstractNode.prototype.click = function() {
 FMTreeAbstractNode.prototype.delete = function() {
   if (this.folder) {
   	if (window.confirm("Do you want to delete \"" + this.text + "\" and all its descendants?")) {
-  	  $.ajax({
+  	  window.alert(this.id.substring(15));
+      $.ajax({
         type: "POST",
         url: "/removeSubtree",
         data: {
-          id       : this.id,
+          _id : this.id.substring(15),
         },
         //dataType:'json',
       }); 
@@ -637,7 +629,7 @@ FMTreeAbstractNode.prototype.delete = function() {
         type: "POST",
         url: "/removeSubtree",
         data: {
-          id : this.id,
+          _id : this.id.substring(15),
         },
         //dataType:'json',
       }); 
@@ -729,9 +721,9 @@ FMTreeAbstractNode.prototype.indent = function(lvl, del, last, level, nodesLeft)
  * FMTree class
  */
 
-function FMTree(sText, sDescription, sOptionality, sVP, sId_no, sAction) {
+function FMTree(sText, sDescription, sOptionality, sVP, sId, sAction) {
   this.base = FMTreeAbstractNode;
-  this.base(sText, sDescription, sOptionality, sVP, sId_no, sAction);
+  this.base(sText, sDescription, sOptionality, sVP, sId, sAction);
   this.plus = FMTreeConfig.lPlusIcon;
 
   /* Defaults to open */
@@ -796,10 +788,9 @@ FMTree.prototype.toString = function() {
 /*
  * FMTreeItem class
  */
-
-function FMTreeItem(sText, sDescription, sOptionality, sVP, sId_no, sAction, eParent) {
+function FMTreeItem(sText, sDescription, sOptionality, sVP, sId, sAction, eParent) {
   this.base = FMTreeAbstractNode;
-  this.base(sText, sDescription, sOptionality, sVP, sId_no, sAction);
+  this.base(sText, sDescription, sOptionality, sVP, sId, sAction);
   /* Defaults to close */
   this.open = false;
   if (eParent) { eParent.add(this); }

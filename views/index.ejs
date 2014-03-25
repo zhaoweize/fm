@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <script src="/javascripts/fmtree.js"></script>
+<script src="/javascripts/constraints.js"></script>
 <link type="text/css" rel="stylesheet" href="/stylesheets/xtree.css">
 
 <div class="row">
@@ -79,12 +80,13 @@
           <table align="center" valign="middle">
             <tr>
               <td style="height:38.5px;">
-                <img src="images/allGrey.png" id="all" style="height:26px;" onclick="yyy.toAll();"/><img src="images/currentWhite.png" id="current" style="height:26px;" onclick="yyy.toCurrent();"/>
+                <img src="images/allGrey.png" id="constraints_all" style="height:26px;"/><img src="images/currentWhite.png" id="constraints_current" style="height:26px;"/>
               </td>
             </tr>
           </table> 
         </div>
-        <div class="myInside">
+        <div class="myInside" id="constraints_cont">
+          <script src="/javascripts/loadConstraints.js"></script>
           <div id="Constraints_0" style="border-bottom: 1px solid #c3c3c3;">
             <table>
               <tr id="Constraints_0">
@@ -122,180 +124,6 @@
                     <tr id="Constraints_0_r_1">
                       <td id="Constraints_0_r_1_text">
                         PST
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div id="Constraints_1" style="border-bottom: 1px solid #c3c3c3;">
-            <table>
-              <tr id="Constraints_1">
-                <td id="Constraints_1_l" style="width:130px; padding:10px;">
-                  <table style="width:130px; text-align:right; padding:10px;">
-                    <tr id="Constraints_1_l_0">
-                      <td id="Constraints_1_l_0_text" style="align:right;">
-                        <font color="#0080FF"><strong>true </strong></font>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-
-                <td id="Constraints_1_m" style="width:70px; padding:10px; text-align:center;">
-                  <img src="images/excludeV.png" style="height:12px;" />
-                </td>
-
-                <td id="Constraints_1_r" style="width:130px; padding:10px;">
-                  <table>
-                    <tr id="Constraints_1_r_0">
-                      <td id="Constraints_1_r_0_text">
-                        Directed
-                      </td>
-                    </tr>
-                    <tr id="Constraints_1_r_1">
-                      <td id="Constraints_1_r_1_text">
-                        Weighted
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div id="Constraints_2" style="border-bottom: 1px solid #c3c3c3;">
-            <table>
-              <tr id="Constraints_2">
-                <td id="Constraints_2_l" style="width:130px; padding:10px;">
-                  <table style="width:130px; text-align:right; padding:10px;">
-                    <tr id="Constraints_2_l_0">
-                      <td id="Constraints_2_l_0_text" style="align:right;">
-                        BFS
-                      </td>
-                    </tr>
-                    <tr id="Constraints_2_l_1">
-                      <td id="Constraints_2_l_1_text" style="align:right;">
-                        DFS
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-
-                <td id="Constraints_2_m" style="width:70px; padding:10px; text-align:center;">
-                  <img src="images/Arequire.png" style="height:12px;" />
-                </td>
-
-                <td id="Constraints_2_r" style="width:130px; padding:10px;">
-                  <table>
-                    <tr id="Constraints_2_r_0">
-                      <td id="Constraints_2_r_0_text">
-                        Simple
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div id="Constraints_3" style="border-bottom: 1px solid #c3c3c3;">
-            <table>
-              <tr id="Constraints_3">
-                <td id="Constraints_3_l" style="width:130px; padding:10px;">
-                  <table style="width:130px; text-align:right; padding:10px;">
-                    <tr id="Constraints_3_l_0">
-                      <td id="Constraints_3_l_0_text" style="align:right;">
-                        Algorithm
-                      </td>
-                    </tr>
-                    <tr id="Constraints_3_l_1">
-                      <td id="Constraints_3_l_1_text" style="align:right;">
-                        Simple
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-
-                <td id="Constraints_3_m" style="width:70px; padding:10px; text-align:center;">
-                  <img src="images/ArequireV.png" style="height:12px;" />
-                </td>
-
-                <td id="Constraints_3_r" style="width:130px; padding:10px;">
-                  <table>
-                    <tr id="Constraints_3_r_0">
-                      <td id="Constraints_3_r_0_text">
-                        Directed
-                      </td>
-                    </tr>
-                    <tr id="Constraints_3_r_1">
-                      <td id="Constraints_3_r_1_text">
-                        Weighted
-                      </td>
-                    </tr>
-                    <tr id="Constraints_3_r_2">
-                      <td id="Constraints_3_r_2_text">
-                        Input
-                      </td>
-                    </tr>
-                    <tr id="Constraints_3_r_3">
-                      <td id="Constraints_3_r_3_text">
-                        Graph Display
-                      </td>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div id="Constraints_4" style="border-bottom: 1px solid #c3c3c3;">
-            <table>
-              <tr id="Constraints_4">
-                <td id="Constraints_2_l" style="width:130px; padding:10px;">
-                  <table style="width:130px; text-align:right; padding:10px;">
-                    <tr id="Constraints_2_l_0">
-                      <td id="Constraints_2_l_0_text" style="align:right;">
-                        Search
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-
-                <td id="Constraints_4_m" style="width:70px; padding:10px; text-align:center;">
-                  <img src="images/require.png" style="height:12px;" />
-                </td>
-
-                <td id="Constraints_4_r" style="width:130px; padding:10px;">
-                  <table>
-                    <tr id="Constraints_4_r_0">
-                      <td id="Constraints_4_r_0_text">
-                        <font color="#0080FF"><strong>false</strong></font>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div id="Constraints_5" style="border-bottom: 1px solid #c3c3c3;">
-            <table>
-              <tr id="Constraints_5">
-                <td id="Constraints_2_l" style="width:130px; padding:10px;">
-                  <table style="width:130px; text-align:right; padding:10px;">
-                    <tr id="Constraints_2_l_0">
-                      <td id="Constraints_2_l_0_text" style="align:right;">
-                        GraphIO
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-
-                <td id="Constraints_5_m" style="width:70px; padding:10px; text-align:center;">
-                  <img src="images/exclude.png" style="height:12px;" />
-                </td>
-
-                <td id="Constraints_5_r" style="width:130px; padding:10px;">
-                  <table>
-                    <tr id="Constraints_5_r_0">
-                      <td id="Constraints_5_r_0_text">
-                        Simple
                       </td>
                     </tr>
                   </table>
