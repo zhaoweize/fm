@@ -1,4 +1,4 @@
-$.ajax({
+/*$.ajax({
   type:"POST",
   url: "/loadFeatureModel",
   success: function(data) {
@@ -10,4 +10,4 @@ $.ajax({
   	},
   });
 	document.write(tree);
-}
+}*/

@@ -210,3 +210,31 @@ input[type="checkbox"] {
   width:15px;
   height:15px;
 }
+
+.myConstraint {
+  border-bottom: 1px solid #c3c3c3;
+}
+
+.myConstraintLeft table{
+  width:130px;
+  padding:10px;
+  margin:5px;
+  text-align:right;
+}
+
+.myConstraintMiddle {
+  width:70px; 
+  padding:10px;
+  margin:10px;
+  text-align: center;
+}
+
+.myConstraintMiddle img {
+  height:10px;
+}
+
+.myConstraintLeft table{
+  width:130px; 
+  padding:10px;
+  margin:10px;
+}
