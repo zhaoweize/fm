@@ -46,7 +46,7 @@ var FMTreeHandler = {
   toggle    : function (oItem) { this.all[oItem.id.replace('-plus','')].toggle(); },
   click     : function (oItem) { this.all[oItem.id.replace('-anchor','')].click();},
   addChild  : function (oItem) { this.all[oItem.id.replace('-adc','')].addChild(); },
-  adcToggle : function (oItem) { this.all[oItem.id.replace('-adc','')].adcToggle(); },
+  //adcToggle : function (oItem) { this.all[oItem.id.replace('-adc','')].adcToggle(); },
   addSibling: function (oItem) { this.all[oItem.id.replace('-ads','')].addSibling(); },
   delete    : function (oItem) { this.all[oItem.id.replace('-rem','')].delete(); },
   editName  : function () {
@@ -193,10 +193,10 @@ var FMTreeHandler = {
     document.getElementById("infoLineButton4").innerHTML="<i class=\"icon-ok\" onclick=\"FMTreeHandler.doEditParent();\"></i>";
   },
   getname: function (node) {
+    var temp = '';
     if(node.id == FMTreeHandler.active.id) {
-      return;
+      return temp;
     }
-    var temp;
     if(node.id == FMTreeHandler.active.parentNode.id) {
       temp = "<option value=\"" + node.id + "\" selected=\"selected\">" + node.text + "</option>";
     }
@@ -391,25 +391,27 @@ var FMTreeHandler = {
  */
 
 function FMTreeAbstractNode(sText, sDescription, sOptionality, sVP, sId, sAction) {
-  this.id  = FMTreeHandler.idPrefix + sId;
-  this.text   = sText || FMTreeConfig.defaultText; 
-  this.description = sDescription || '';
-  if (sOptionality == 'Mandatory' || sOptionality == 'Optional') {
-    this.optionality = sOptionality;
+  if (sId) {
+    this.id  = FMTreeHandler.idPrefix + sId;
+    this.text   = sText || FMTreeConfig.defaultText; 
+    this.description = sDescription || '';
+    if (sOptionality == 'Mandatory' || sOptionality == 'Optional') {
+      this.optionality = sOptionality;
+    }
+    else {
+      this.optionality = 'Optional';
+    }
+    if (sVP == 'XOR' || sVP == 'OR') {
+      this.VP = sVP;
+    }
+    else {
+      this.VP = 'Non-VP';
+    }
+    this.action = sAction || FMTreeConfig.defaultAction;
+    this.childNodes  = [];
+    this._last  = false; /*该结点是否是兄弟中最后一个 */
+    FMTreeHandler.all[this.id] = this;
   }
-  else {
-    this.optionality = 'Optional';
-  }
-  if (sVP == 'XOR' || sVP == 'OR') {
-    this.VP = sVP;
-  }
-  else {
-    this.VP = 'Non-VP';
-  }
-  this.action = sAction || FMTreeConfig.defaultAction;
-  this.childNodes  = [];
-  this._last  = false; /*该结点是否是兄弟中最后一个 */
-  FMTreeHandler.all[this.id] = this;
 }
 
 /* 添加一个子结点到当前节点，node为子结点实例，bNoIdent为true时将防止在增加结点时树的折叠*/
@@ -601,7 +603,7 @@ FMTreeAbstractNode.prototype.click = function() {
 FMTreeAbstractNode.prototype.delete = function() {
   if (this.folder) {
   	if (window.confirm("Do you want to delete \"" + this.text + "\" and all its descendants?")) {
-  	  window.alert(this.id.substring(15));
+  	  //window.alert(this.id.substring(15));
       $.ajax({
         type: "POST",
         url: "/removeSubtree",

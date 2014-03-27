@@ -216,16 +216,16 @@ input[type="checkbox"] {
 }
 
 .myConstraintLeft table{
-  width:130px;
+  width:117px;
   padding:10px;
   margin:5px;
   text-align:right;
 }
 
 .myConstraintMiddle {
-  width:70px; 
+  width:49px; 
   padding:10px;
-  margin:10px;
+  margin:5px;
   text-align: center;
 }
 
@@ -233,8 +233,28 @@ input[type="checkbox"] {
   height:10px;
 }
 
-.myConstraintLeft table{
-  width:130px; 
+.myConstraintRight table{
+  width:117px; 
   padding:10px;
+  margin:5px;
+}
+
+.myConstraintButton {
+  width:20px;
+  text-align: center;
+}
+
+.addNewConstraintSelect {
+  width:200px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.addNewConstraintItemTable {
+  width:200px;
+}
+
+.addNewConstraintRelation {
+  width:80px;
   margin:10px;
 }
