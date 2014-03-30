@@ -14,7 +14,6 @@ module.exports = Feature;
 //
 Feature.prototype.save = function save(callback){
   // 存入 Mongodb 的文檔
-  console.log('HI');
   var feature = {
 		text        : this.text        ,
 		parent_id   : this.parent_id   ,
@@ -24,17 +23,15 @@ Feature.prototype.save = function save(callback){
 		VP          : this.VP          ,
 		level       : this.level       ,
   };
-  console.log('HELLO');
   mongodb.collection('fmtree', function(err, collection) {
     if (err) {
       mongodb.close();
       return callback(err);
     }
-    console.log("WHAT THE FUCK IS GOING ON?");
     //collection.ensureIndex('id', {unique: true});
     collection.insert(feature, {safe:true}, function(err, feature) {
       //mongodb.close();
-      console.log("WHAT's GOING ON HUH?  " + err);
+      console.log("ERROR: " + err);
       callback(err, feature);
     });
   });

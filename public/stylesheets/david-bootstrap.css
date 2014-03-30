@@ -251,10 +251,20 @@ input[type="checkbox"] {
 }
 
 .addNewConstraintItemTable {
-  width:200px;
+  
 }
 
 .addNewConstraintRelation {
   width:80px;
   margin:10px;
+}
+
+.addNewConstraintIsNot {
+  width:50px;
+  margin: 5px;
+}
+
+.addNewConstraintRemove {
+  width:20px;
+  text-align: center;
 }

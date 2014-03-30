@@ -1,4 +1,5 @@
 var Feature = require('../models/feature.js');
+var Constraint = require('../models/constraint.js');
 /*
  * GET home page.
  */
@@ -48,6 +49,21 @@ exports.addNewFeature = function(req,res){
   });
 };
 
+
+exports.getFeatureById = function(req, res) {
+	console.log("START \"getFeatureById\"");
+	var _id = req.body._id;
+	//console.log(_id + '\n');
+	Feature.getById(_id, function(err, feature) {
+		if (err) {
+			console.log("GET FEATURE BY ID FAILED");
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		res.send({'feature':feature});
+	});
+};
+
 exports.loadFeatureModel = function(req,res){
 	console.log("START \"loadFeatureModel\"");
 	Feature.getAll(function(err, features) {
@@ -57,7 +73,7 @@ exports.loadFeatureModel = function(req,res){
 			return res.redirect('/');
 		}
 		res.send({'features': features});
-		console.log("FINISH SENDING")
+		console.log("FINISH SENDING");
 	});
 };
 
@@ -149,5 +165,66 @@ exports.updateVP = function(req,res) {
 			return res.redirect('/');
 		}
 		console.log("UPDATE VP: SUCCESS");
+	});
+};
+
+exports.addNewConstraint = function(req,res) {
+	console.log("index.js中的 \"addNewConstraint\"开始了！");
+  var newConstraint = new Constraint({
+		left       : req.body.left     ,
+		relation   : req.body.relation ,
+		right      : req.body.right    ,
+  });
+  Constraint.get(newConstraint, function(err, constraint) {
+  	if (constraint)
+  	  err = 'Constraint already exists.';
+  	if (err) {
+  		req.flash('error', err);
+  		console.log("Constraint already exists.");
+  		return res.redirect('/');
+  	}
+  	newConstraint.save(function(err) {
+  		if (err)  {
+  			req.flash('error', err);
+  			return res.redirect('/');
+  		}
+ 			Constraint.get(newConstraint, function(err, theconstraint) {
+ 				if (!theconstraint)
+ 					err = 'Constraint has not be inserted.';
+ 				if (err) {
+ 					req.flash('error', err);
+ 					console.log("Constraint has not be inserted.");
+ 					return res.redirect('/');
+ 				}
+ 				res.send({'_id': theconstraint._id});
+ 				console.log("ADD NEW CONSTRAINT: SUCCESS");
+ 			});
+  	});
+  });
+};
+
+exports.loadConstraints = function(req,res) {
+	console.log("START \"loadConstraints\"");
+	Constraint.getAll(function(err, constraints) {
+		if (err) {
+			console.log("LOAD CONSTRAINT: FAIL");
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		res.send({'constraints': constraints});
+		console.log("FINISH SENDING");
+	});
+};
+
+exports.removeConstraint = function(req,res) {
+	console.log("START \"removeConstraint\"");
+	var _id = req.body._id;
+	Constraint.remove(_id, function(err){ 
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		res.send({});
+		console.log("DELETE CONSTRAINT: SUCCESS");
 	});
 };

@@ -76,9 +76,9 @@
   <div class="span4" style="height:1000px;">
     <div class="myBorderRadius">
       <h4 align="center" class="myFont"> Constraints </h4>
-      <div class ="myInside" style="height:40px;">
+      <div class ="myInside" style="height:40px;"  onmouseover="constraints_button_plus.className=''" onmouseout="constraints_button_plus.className='invisible'">
         <table align="center" valign="middle">
-          <tr onmouseover="constraints_button_plus.className=''" onmouseout="constraints_button_plus.className='invisible'">
+          <tr>
             <td style="width:22px; padding:0px;"></td>
             <td style="height:38.5px; width:302px; padding:0px;">
               <div align="center">
@@ -86,66 +86,32 @@
               </div>
             </td>
             <td style="width:22px; padding:0px;" align="center" id="constraints_button_plus" class="invisible" >
-              <i href="#addNewConstraint" data-toggle="modal" class="icon-plus" id="constraint_ads" onclick="AddNewConstraintHandler.addLeftItem(); AddNewConstraintHandler.addRightItem();"></i>
+              <i href="#addNewConstraint" data-toggle="modal" class="icon-plus" id="constraint_plus" onclick="AddNewConstraintHandler.inIt();"></i>
             </td>
           </tr>
         </table>
       </div>
       <div class="myInside" id="constraints_cont">
-        <script src="/javascripts/loadConstraints.js"></script>
+        
       </div>
+      <script src="/javascripts/loadConstraints.js"></script>
     </div>
   </div>
 </div>
 
-<div id="addNewConstraint" class="modal hide fade" style="width:700px; margin-left:-350px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="addNewConstraint" class="modal hide fade" style="width:800px; margin-left:-400px;" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <script src="/javascripts/addNewConstraint.js"></script>
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
     <h3 id="addNewConstraintTitle">Add a New Constraint</h3>
   </div>
   <div class="modal-body" align="center">
-    <table>
-      <script src="/javascripts/addNewConstraint.js"></script>
-      <tr>
-        <td id="addNewConstraint_left" class="addNewConstraintItemTable"></td>
-        <td id="addNewConstraint_relation" >
-          <select class="addNewConstraintRelation">
-            <option value="empty">  </option>
-            <option value="Aexclude"> A-x- </option>
-            <option value="AexcludeA"> A-x-A </option>
-            <option value="AexcludeV"> A-x-V </option>
-            <option value="Arequire"> A--> </option>
-            <option value="ArequireA"> A-->A </option>
-            <option value="ArequireV"> A-->V </option>
-            <option value="exclude"> -x- </option>
-            <option value="excludeA"> -x-A </option>
-            <option value="excludeV"> -x-V </option>
-            <option value="require"> --> </option>
-            <option value="requireA"> -->A </option>
-            <option value="requireV"> -->V </option>
-            <option value="Vexclude"> V-x- </option>
-            <option value="VexcludeA"> V-x-A </option>
-            <option value="VexcludeV"> V-x-V </option>
-            <option value="Vrequire"> V--> </option>
-            <option value="VrequireA"> V-->A </option>
-            <option value="VrequireV"> V-->V </option>
-          </select>
-        </td>
-        <td id="addNewConstraint_right" class="addNewConstraintItemTable"></td>
-      </tr>
-      <tr>
-        <td align="center">
-          <i class="icon-plus" id="addNewConstraint_left_plus" onclick="AddNewConstraintHandler.addLeftItem();"></i>
-        </td>
-        <td></td>
-        <td align="center">
-          <i class="icon-plus" id="addNewConstraint_right_plus" onclick="AddNewConstraintHandler.addRightItem();"></i>
-        </td>
-      </tr>
+    <table id="addNewConstraint_body">
+      
     </table>
   </div>
   <div class="modal-footer" style="text-align: center;">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button class="btn btn-primary">Admit</button>
+    <button class="btn btn-primary" onclick="AddNewConstraintHandler.admit(); $('#addNewConstraint').modal('hide');">Admit</button>
   </div>
 </div>

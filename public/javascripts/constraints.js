@@ -40,10 +40,10 @@ var ConstraintHandler = {
   }
 }
 
-function Constraint_item(sId, sIsNot, sFeature_id) {
+function Constraint_item(sId, sIsNot, sFeature_text) {
 	this.id = sId;
 	this.isNot = sIsNot;
-	this.feature_id = sFeature_id;
+	this.feature_text = sFeature_text;
 }
 
 function Constraint(sLeft, sRelation, sRight, sId) {
@@ -60,11 +60,22 @@ Constraint.prototype.add = function () {
 
 Constraint.prototype.remove = function() {
 	if (window.confirm("Do you want to delete this constraint?")) {
-		ConstraintHandler.all[this.id] = null;
-		var tmp = document.getElementById(this.id);
-		if (tmp) { 
-			tmp.parentNode.removeChild(tmp);
-		}
+		var temp=this;
+		$.ajax({
+        type: "POST",
+        url: "/removeConstraint",
+        data: {
+          _id : temp.id.substring(11),
+        },
+        dataType:'json',
+        success:function(data){
+        	delete ConstraintHandler.all[temp.id];
+					var tmp = document.getElementById(temp.id);
+					if (tmp) { 
+						tmp.parentNode.removeChild(tmp);
+					}
+        },
+		});	
 	}
 }
 
@@ -79,7 +90,7 @@ Constraint.prototype.toString = function () {
 			"<td id=\"" + tempid + "_left_" + item.id + "_text\">";
 		if (item.isNot)
 			str += "~ ";
-		str += item.feature_id + 
+		str += item.feature_text + 
 			"</td></tr>";
 	});
 	
@@ -94,7 +105,7 @@ Constraint.prototype.toString = function () {
 			"<td id=\"" + tempid + "_right_" + item.id + "_text\">";
 		if (item.isNot)
 			str += "~ ";
-		str += item.feature_id + 
+		str += item.feature_text + 
 			"</td></tr>";
 	});	
   
