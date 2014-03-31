@@ -106,14 +106,24 @@ exports.removeSubtree = function(req,res) {
 exports.updateText = function(req,res) {
 	console.log("START \"updateText\"");
 	var _id = req.body._id;
+	var root = req.body.root;
 	var newText = req.body.text;
-	Feature.updateText(_id, newText, function(err) {
-		if (err) {
-			req.flash('error', err);
-			return res.redirect('/');
-		}
-		console.log("UPDATE NAME: SUCCESS");
-	});
+	Feature.getByTextAndRoot(newText, root, function(err, feature) {
+  	if (feature)
+  	  err = 'Feature already exists.';
+  	if (err) {
+  		req.flash('error', err);
+  		console.log("Feature already exists.");
+  		return res.redirect('/');
+  	}
+		Feature.updateText(_id, newText, function(err) {
+			if (err) {
+				req.flash('error', err);
+				return res.redirect('/');
+			}
+			console.log("UPDATE NAME: SUCCESS");
+		});	
+  });
 };
 
 exports.updateDescription = function(req,res) {

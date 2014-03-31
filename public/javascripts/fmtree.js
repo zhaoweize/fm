@@ -55,42 +55,52 @@ var FMTreeHandler = {
     document.getElementById("infoLineButton1").innerHTML="<i class=\"icon-ok\" onclick=\"FMTreeHandler.doEditName();\"></i>";
   },
   doEditName: function () {
-    var name=document.getElementById("name").value;
-    FMTreeHandler.active.text = name;
-    document.getElementById("info-name").innerHTML = name;
-    document.getElementById("infoLineButton1").innerHTML="<i class=\"icon-pencil\" onclick=\"FMTreeHandler.editName();\"></i>";
-    document.getElementById(FMTreeHandler.active.id + "-anchor").innerHTML = name;
-    
-    for (constraint in ConstraintHandler.all){
-      var flag = false;
-      ConstraintHandler.all[constraint].left.forEach(function (item, index) {
-        if (item.id == FMTreeHandler.active.id.substring(15)) {
-          item.feature_text = FMTreeHandler.active.text;
-          flag = true;
-        }
-      });
-      ConstraintHandler.all[constraint].right.forEach(function (item, index) {
-        if (item.id == FMTreeHandler.active.id.substring(15)) {
-          item.feature_text = FMTreeHandler.active.text;
-          flag = true;
-        }
-      });
-      if (flag) {
-        if (ConstraintHandler.appear == "all") {ConstraintHandler.showAll();}
-        else {ConstraintHandler.showCurrent();}
-      }
-    }
+    var root = FMTreeHandler.active;
+    while (root.parentNode) { root = root.parentNode; }
     $.ajax({
       type: "POST",
       url: "/updateText",
       data: {
         _id : FMTreeHandler.active.id.substring(15),
+        root : root.id.substring(15),
         text : FMTreeHandler.active.text,
       },
-      //dataType:'json',
+      dataType:'json',
+      success: function (data) {
+        var name=document.getElementById("name").value;
+        FMTreeHandler.active.text = name;
+        document.getElementById("info-name").innerHTML = name;
+        document.getElementById("infoLineButton1").innerHTML="<i class=\"icon-pencil\" onclick=\"FMTreeHandler.editName();\"></i>";
+        document.getElementById(FMTreeHandler.active.id + "-anchor").innerHTML = name;
+        for (constraint in ConstraintHandler.all){
+          var flag = false;
+          ConstraintHandler.all[constraint].left.forEach(function (item, index) {
+            if (item.id == FMTreeHandler.active.id.substring(15)) {
+              item.feature_text = FMTreeHandler.active.text;
+              flag = true;
+            }
+          });
+          ConstraintHandler.all[constraint].right.forEach(function (item, index) {
+            if (item.id == FMTreeHandler.active.id.substring(15)) {
+              item.feature_text = FMTreeHandler.active.text;
+              flag = true;
+            }
+          });
+          if (flag) {
+            if (ConstraintHandler.appear == "all") {ConstraintHandler.showAll();}
+            else {ConstraintHandler.showCurrent();}
+          }
+        }
+        FMTreeHandler.changingName = false;
+      },
+      error: function (data) {
+        window.alert("Failed");
+        document.getElementById("info-name").innerHTML = FMTreeHandler.active.text;
+        document.getElementById("infoLineButton1").innerHTML="<i class=\"icon-pencil\" onclick=\"FMTreeHandler.editName();\"></i>";
+        document.getElementById(FMTreeHandler.active.id + "-anchor").innerHTML = FMTreeHandler.active.text;
+        FMTreeHandler.changingName = false;
+      }
     }); 
-
-    FMTreeHandler.changingName = false;
   },
   editDescription: function () {
     FMTreeHandler.changingDescription = true;
