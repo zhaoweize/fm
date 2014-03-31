@@ -23,7 +23,51 @@ var ConstraintConfig = {
 var ConstraintHandler = {
 	idPrefix  : "Constraint_",
 	all : {},
-	remove    : function (oItem) { this.all[oItem.id.replace('-rem','')].remove(); },
+	appear : "all",
+	delete    : function (oItem) { this.all[oItem.id.replace('-rem','')].delete(); },
+	toCurrent : function () {
+		if (this.appear == "all") {
+			this.appear = "current"; 
+			this.showCurrent();
+			document.getElementById("constraints_all").src = "images/allWhite.png";
+			document.getElementById("constraints_current").src = "images/currentGrey.png";
+		}
+	},
+	toAll     : function () {
+		if (this.appear == "current") { 
+			this.appear = "all"; 
+			this.showAll();
+			document.getElementById("constraints_all").src = "images/allGrey.png";
+			document.getElementById("constraints_current").src = "images/currentWhite.png";
+		}
+	},
+	showCurrent: function () {
+		document.getElementById("constraints_cont").innerHTML = '';
+		if (FMTreeHandler.active){
+			for (item in this.all) {
+				var flag = false;
+				this.all[item].left.forEach(function (citem,index) {
+					if (citem.feature_text == FMTreeHandler.active.text) {flag = true;}
+				});
+				this.all[item].right.forEach(function (citem,index) {
+					if (citem.feature_text == FMTreeHandler.active.text) {flag = true;}
+				});
+				if (flag) {
+					this.all[item].add();
+					var tmp_left = document.getElementById(this.all[item].id + "_left_" + FMTreeHandler.active.id.substring(15) + "_text");
+					var temp_right = document.getElementById(this.all[item].id + "_right_" + FMTreeHandler.active.id.substring(15) + "_text");
+					if (tmp_left) {tmp_left.style.fontWeight='bold';}
+					if (temp_right) {temp_right.style.fontWeight='bold';}
+				}
+			}
+		}
+	},
+	showAll    : function () {
+		document.getElementById("constraints_cont").innerHTML = '';
+		for (item in this.all) {
+			this.all[item].add();
+		}
+	},
 	insertHTMLBeforeEnd  :  function (oElement, sHTML) {
     /* 如果可以用 insertAdjacentHTML 方法 */
     if (oElement.insertAdjacentHTML != null) {
@@ -58,25 +102,29 @@ Constraint.prototype.add = function () {
 	ConstraintHandler.insertHTMLBeforeEnd(document.getElementById("constraints_cont"), this.toString());
 }
 
-Constraint.prototype.remove = function() {
+Constraint.prototype.delete = function() {
 	if (window.confirm("Do you want to delete this constraint?")) {
-		var temp=this;
-		$.ajax({
-        type: "POST",
-        url: "/removeConstraint",
-        data: {
-          _id : temp.id.substring(11),
-        },
-        dataType:'json',
-        success:function(data){
-        	delete ConstraintHandler.all[temp.id];
-					var tmp = document.getElementById(temp.id);
-					if (tmp) { 
-						tmp.parentNode.removeChild(tmp);
-					}
-        },
-		});	
+		this.remove();
 	}
+}
+
+Constraint.prototype.remove = function() {
+	var temp=this;
+	$.ajax({
+      type: "POST",
+      url: "/removeConstraint",
+      data: {
+        _id : temp.id.substring(11),
+      },
+      dataType:'json',
+      success:function(data){
+      	delete ConstraintHandler.all[temp.id];
+				var tmp = document.getElementById(temp.id);
+				if (tmp) { 
+					tmp.parentNode.removeChild(tmp);
+				}
+      },
+	});	
 }
 
 Constraint.prototype.toString = function () {
@@ -111,7 +159,7 @@ Constraint.prototype.toString = function () {
   
   str += "</table></td>" +
   	"<td class=\"myConstraintButton\"><span class=\"invisible\" id=\"" + this.id + "_button\">" +
-  	"<i class=\"icon-remove\" id=\"" + this.id + "-rem\" onclick=\"ConstraintHandler.remove(this);\"></i> " +
+  	"<i class=\"icon-remove\" id=\"" + this.id + "-rem\" onclick=\"ConstraintHandler.delete(this);\"></i> " +
   	"</span>" + "</td></tr></table></div>";
   return str;
 }

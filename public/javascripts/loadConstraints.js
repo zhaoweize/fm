@@ -1,5 +1,4 @@
 function loadConstraints() {
-  document.getElementById("constraints_cont").innerHTML = '';
   $.ajax({
     type:"POST",
     url: "/loadConstraints",

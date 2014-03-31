@@ -204,22 +204,20 @@ var AddNewConstraintHandler = {
       },
       dataType:'json',
       success: function(data) {
-        loadConstraints();
-      },
-      /*success: function(data) {
         var dLefts = [];
         lefts.forEach(function(left, index) {
-            var dLeft = new Constraint_item(left.item_id, left.isNot, left.item_text);
+            var dLeft = new Constraint_item(left.item_id, left.isNot, FMTreeHandler.all[FMTreeHandler.idPrefix + left.item_id].text);
             dLefts.push(dLeft);
         });
         var dRights = [];
         rights.forEach(function(right, index) {
-          var dRight = new Constraint_item(right.item, right.isNot, right.item_text);
+          var dRight = new Constraint_item(right.item_id, right.isNot, FMTreeHandler.all[FMTreeHandler.idPrefix + right.item_id].text);
           dRights.push(dRight);
         });
         var constraint = new Constraint(dLefts, document.getElementById("addNewConstraint_relation").value, dRights, data._id);
-        constraint.add();
-      },*/
+        if (ConstraintHandler.appear == 'all') {ConstraintHandler.showAll();}
+        else {ConstraintHandler.showCurrent();}
+      },
       error: function(data) {
         window.alert("FAILED!!!");
       },

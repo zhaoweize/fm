@@ -53,19 +53,33 @@ var FMTreeHandler = {
     FMTreeHandler.changingName = true;
     document.getElementById("info-name").innerHTML = "<textarea rows=\"1\" id=\"name\">" + FMTreeHandler.active.text + "</textarea>";
     document.getElementById("infoLineButton1").innerHTML="<i class=\"icon-ok\" onclick=\"FMTreeHandler.doEditName();\"></i>";
-    //document.getElementById("infoLineButton1").className='';
-    //document.getElementById("infoLine1").onmouseover='';
-    //document.getElementById("infoLine1").onmouseout='';
   },
   doEditName: function () {
     var name=document.getElementById("name").value;
     FMTreeHandler.active.text = name;
     document.getElementById("info-name").innerHTML = name;
     document.getElementById("infoLineButton1").innerHTML="<i class=\"icon-pencil\" onclick=\"FMTreeHandler.editName();\"></i>";
-    //document.getElementById("infoLineButton1").className="invisible";
     document.getElementById(FMTreeHandler.active.id + "-anchor").innerHTML = name;
-    //document.getElementById("infoLine1").onmouseover="infoLineButton1.className=''";
-    //document.getElementById("infoLine1").onmouseout="infoLineButton1.className='invisible'";
+    
+    for (constraint in ConstraintHandler.all){
+      var flag = false;
+      ConstraintHandler.all[constraint].left.forEach(function (item, index) {
+        if (item.id == FMTreeHandler.active.id.substring(15)) {
+          item.feature_text = FMTreeHandler.active.text;
+          flag = true;
+        }
+      });
+      ConstraintHandler.all[constraint].right.forEach(function (item, index) {
+        if (item.id == FMTreeHandler.active.id.substring(15)) {
+          item.feature_text = FMTreeHandler.active.text;
+          flag = true;
+        }
+      });
+      if (flag) {
+        if (ConstraintHandler.appear == "all") {ConstraintHandler.showAll();}
+        else {ConstraintHandler.showCurrent();}
+      }
+    }
     $.ajax({
       type: "POST",
       url: "/updateText",
@@ -82,9 +96,6 @@ var FMTreeHandler = {
     FMTreeHandler.changingDescription = true;
     document.getElementById("info-description").innerHTML = "<textarea rows=\"5\" id=\"description\">" + FMTreeHandler.active.description + "</textarea>";
     document.getElementById("infoLineButton2").innerHTML="<i class=\"icon-ok\" onclick=\"FMTreeHandler.doEditDescription();\"></i>";
-    //document.getElementById("infoLineButton2").className="";
-    //document.getElementById("infoLine2").onmouseover='';
-    //document.getElementById("infoLine2").onmouseout='';
   },
   doEditDescription: function () {
     var description=document.getElementById("description").value;
@@ -571,6 +582,8 @@ FMTreeAbstractNode.prototype.click = function() {
   FMTreeHandler.changingVP = false;
   document.getElementById(this.id).className = 'FM-tree-item active-item';
   FMTreeHandler.active = this;
+  if (ConstraintHandler.appear=="current")
+    ConstraintHandler.showCurrent();
   //显示相应Information
   if (this.parentNode) {
     document.getElementById("info-name").innerHTML=this.text;
@@ -835,6 +848,18 @@ FMTreeItem.prototype.remove = function() {
 }
 
 FMTreeItem.prototype._remove = function() {
+  var tempid=this.id.substring(15);
+  for(constraint in ConstraintHandler.all) {
+    var flag = false;
+    ConstraintHandler.all[constraint].left.forEach(function (item, index) {
+      if (item.id == tempid) {flag = true;}
+    });
+    ConstraintHandler.all[constraint].right.forEach(function (item, index) {
+      if (item.id == tempid) {flag = true;}
+    });
+    if (flag) {ConstraintHandler.all[constraint].remove();}
+  }
+
   for (var i = this.childNodes.length - 1; i >= 0; i--) {
     this.childNodes[i]._remove();
    }
@@ -846,7 +871,11 @@ FMTreeItem.prototype._remove = function() {
       this.parentNode.childNodes.length -= 1;
       if (i + 1 == this.parentNode.childNodes.length) { this.parentNode._last = true; }
       break;
-  }  }
+    }  
+  }
+
+  
+
   FMTreeHandler.all[this.id] = null;
   var tmp = document.getElementById(this.id);
   if (tmp) { tmp.parentNode.removeChild(tmp); }
